@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
    int f_present = 0, g_present = 0;
    int n_value_f = 0;
    int n_value_g = 0;
-   char ordre[2] = {0, 0};
+   char ordre[2];
    int ordre_idx = 0;
    int resultat;
    
