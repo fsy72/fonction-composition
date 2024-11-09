@@ -9,12 +9,10 @@ extern char *optarg;
 int f(int n) {
    int p = 1;
    for(int i=0; i<n; i++)
-   p *= 2;
+      p *= 2;
    return p;
 }
 int g(int n) {  return 2*n; }
-int fog(int n) {    return f(g(n)); }
-int gof(int n) {    return g(f(n)); }
 
 void afficher_usage(char *nom_programme) {
    printf("Usage: %s -f n | -g n\n", nom_programme);
@@ -31,8 +29,7 @@ int main(int argc, char *argv[]) {
    int f_present = 0, g_present = 0;
    int n_value_f = 0;
    int n_value_g = 0;
-   int ordre_idx = 0;
-   
+
    if (argc<3) {
       printf("Nombre d'argument insuffisant\n");
       afficher_usage(argv[0]);
@@ -52,16 +49,17 @@ int main(int argc, char *argv[]) {
                n_value_g = atoi(optarg);
             break;
          case ':':
-            if (f_present) {
-               // fog(n)
-               printf("fog(%d) = f(g(%d)) = 2^(2*%d) = %d\n", 
-               n_value_f, n_value_f, n_value_f, f(g(n_value_f)));
-            }
-            else if (g_present) {
-               // gof(n)
-               printf("gof(%d) = g(f(%d)) = 2*(2^%d) = %d\n", 
-               n_value_g, n_value_g, n_value_g, g(f(n_value_g)));
-            }
+            if (f_present) 
+               if(!strcmp(argv[3],"-g")){
+                  printf("fog(%d) = f(g(%d)) = 2^(2*%d) = %d\n", n_value_f, n_value_f, n_value_f, f(g(n_value_f)));
+               } else
+                  afficher_usage(argv[0]);
+            else 
+               if (g_present) 
+                  if(!strcmp(argv[3],"-f")){
+                     printf("gof(%d) = g(f(%d)) = 2*(2^%d) = %d\n", n_value_g, n_value_g, n_value_g, g(f(n_value_g)));
+                  } else
+                     afficher_usage(argv[0]);
             return 0;
          case '?':
             fprintf(stderr, "Option inconnue ou argument manquant\n");
@@ -75,9 +73,13 @@ int main(int argc, char *argv[]) {
       afficher_usage(argv[0]);
       exit(1);
    }
+   
    if (f_present && !g_present) {
       // Cas f(n)
-      printf("f(%d) = 2^%d = %d\n", n_value_f, n_value_f, f(n_value_f));
+      if(n_value_f < 0)
+         printf("f(%d) = 2^%d = %.3f\n", n_value_f, n_value_f, (1.0/f(-n_value_f)));
+      else
+         printf("f(%d) = 2^%d = %d\n", n_value_f, n_value_f, f(n_value_f));
    }
    else {
       if (g_present && !f_present) {
