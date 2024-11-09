@@ -31,9 +31,7 @@ int main(int argc, char *argv[]) {
    int f_present = 0, g_present = 0;
    int n_value_f = 0;
    int n_value_g = 0;
-   char ordre[2];
    int ordre_idx = 0;
-   int resultat;
    
    if (argc<3) {
       printf("Nombre d'argument insuffisant\n");
@@ -47,26 +45,22 @@ int main(int argc, char *argv[]) {
             f_present = 1;
             if(!g_present)
                n_value_f = atoi(optarg);
-            ordre[ordre_idx++] = 'f';
             break;
          case 'g':
             g_present = 1;
             if(!f_present)
                n_value_g = atoi(optarg);
-            ordre[ordre_idx++] = 'g';
             break;
          case ':':
             if (f_present) {
                // fog(n)
-               resultat = fog(n_value_f);
                printf("fog(%d) = f(g(%d)) = 2^(2*%d) = %d\n", 
-               n_value_f, n_value_f, n_value_f, resultat);
+               n_value_f, n_value_f, n_value_f, f(g(n_value_f)));
             }
             else if (g_present) {
                // gof(n)
-               resultat = gof(n_value_g);
                printf("gof(%d) = g(f(%d)) = 2*(2^%d) = %d\n", 
-               n_value_g, n_value_g, n_value_g, resultat);
+               n_value_g, n_value_g, n_value_g, g(f(n_value_g)));
             }
             return 0;
          case '?':
@@ -75,6 +69,7 @@ int main(int argc, char *argv[]) {
             return 1;
       }
    }
+   
    if (!f_present && !g_present) {
       fprintf(stderr, "Au moins une option -f ou -g est requise\n");
       afficher_usage(argv[0]);
@@ -82,14 +77,12 @@ int main(int argc, char *argv[]) {
    }
    if (f_present && !g_present) {
       // Cas f(n)
-      resultat = f(n_value_f);
-      printf("f(%d) = 2^%d = %d\n", n_value_f, n_value_f, resultat);
+      printf("f(%d) = 2^%d = %d\n", n_value_f, n_value_f, f(n_value_f));
    }
    else {
       if (g_present && !f_present) {
          // Cas g(n)
-         resultat = g(n_value_g);
-         printf("g(%d) = 2*%d = %d\n", n_value_g, n_value_g, resultat);
+         printf("g(%d) = 2*%d = %d\n", n_value_g, n_value_g, g(n_value_g));
       }
    }
 
