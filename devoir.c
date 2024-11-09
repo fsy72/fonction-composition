@@ -41,43 +41,40 @@ int main(int argc, char *argv[]) {
       exit(1);
    }
    
-   if(!strcmp(argv[1],"-f"))
-      while ((opt = getopt(argc, argv, ":f:g")) != -1) {
-         switch (opt) {
-            case 'f':
-               f_present = 1;
+   while ((opt = getopt(argc, argv, ":f:g:")) != -1) {
+      switch (opt) {
+         case 'f':
+            f_present = 1;
+            if(!g_present)
                n_value_f = atoi(optarg);
-               ordre[ordre_idx++] = 'f';
-               break;
-            case 'g':
-               g_present = 1;
-               ordre[ordre_idx++] = 'g';
-               break;
-            case '?':
-               fprintf(stderr, "Option inconnue ou argument manquant\n");
-               afficher_usage(argv[0]);
-               return 1;
-         }
-      }
-   else if(!strcmp(argv[1],"-g"))
-      while ((opt = getopt(argc, argv, ":g:f")) != -1) {
-         switch (opt) {
-            case 'f':
-               f_present = 1;
-               ordre[ordre_idx++] = 'f';
-               break;
-            case 'g':
-               g_present = 1;
+            ordre[ordre_idx++] = 'f';
+            break;
+         case 'g':
+            g_present = 1;
+            if(!f_present)
                n_value_g = atoi(optarg);
-               ordre[ordre_idx++] = 'g';
-               break;
-            case '?':
-               fprintf(stderr, "Option inconnue ou argument manquant\n");
-               afficher_usage(argv[0]);
-               return 1;
-         }
+            ordre[ordre_idx++] = 'g';
+            break;
+         case ':':
+            if (f_present) {
+               // fog(n)
+               resultat = fog(n_value_f);
+               printf("fog(%d) = f(g(%d)) = 2^(2*%d) = %d\n", 
+               n_value_f, n_value_f, n_value_f, resultat);
+            }
+            else if (g_present) {
+               // gof(n)
+               resultat = gof(n_value_g);
+               printf("gof(%d) = g(f(%d)) = 2*(2^%d) = %d\n", 
+               n_value_g, n_value_g, n_value_g, resultat);
+            }
+            return 0;
+         case '?':
+            fprintf(stderr, "Option inconnue ou argument manquant\n");
+            afficher_usage(argv[0]);
+            return 1;
       }
-
+   }
    if (!f_present && !g_present) {
       fprintf(stderr, "Au moins une option -f ou -g est requise\n");
       afficher_usage(argv[0]);
@@ -93,22 +90,6 @@ int main(int argc, char *argv[]) {
          // Cas g(n)
          resultat = g(n_value_g);
          printf("g(%d) = 2*%d = %d\n", n_value_g, n_value_g, resultat);
-      }
-      else {
-         if (f_present && g_present) {
-            if (ordre[0] == 'f' && ordre[1] == 'g') {
-               // fog(n)
-               resultat = fog(n_value_f);
-               printf("fog(%d) = f(g(%d)) = 2^(2*%d) = %d\n", 
-               n_value_f, n_value_f, n_value_f, resultat);
-            }
-            else if (ordre[0] == 'g' && ordre[1] == 'f') {
-               // gof(n)
-               resultat = gof(n_value_g);
-               printf("gof(%d) = g(f(%d)) = 2*(2^%d) = %d\n", 
-               n_value_g, n_value_g, n_value_g, resultat);
-            }
-         }
       }
    }
 
